@@ -11,4 +11,6 @@ import java.util.Map;
 public interface PantallaService {
 
     public void getAllClientes(Map.Entry<Cliente, ArrayList<Cuenta>> cl);
+
+    void forCuenta(ArrayList<Cuenta> cuenta);
 }

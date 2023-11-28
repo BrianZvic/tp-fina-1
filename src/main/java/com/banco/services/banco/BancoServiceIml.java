@@ -2,6 +2,7 @@ package com.banco.services.banco;
 import com.banco.domain.*;
 import com.banco.entrada.ImputConsoleServices;
 import com.banco.enums.CuentaEnum;
+import com.banco.services.cliente.ClienteServices;
 import com.banco.services.cuenta.CuentaServices;
 import com.banco.services.cuenta.CuentaServicesImpl;
 import com.banco.services.menu.MenuServiceImpl;
@@ -16,6 +17,8 @@ public class BancoServiceIml implements BancoService{
         private PantallaServiceImp pantalla;
         private WhileMenuServices whileMenuServices;
         private CuentaServices cuentaServices;
+        private ClienteServices clienteServices;
+
 
         public static final String NO_SE_HA_ENCONTRADO_CLIENTE = "No se ha encontrado al cliente";
         public static final String CUENTA_CREADA_CORRECTAMENTE = "Cuenta creada correctamente";
@@ -30,12 +33,12 @@ public class BancoServiceIml implements BancoService{
     public static final String MONTO_GIRO_MODIFICADO = "Monto giro descubierto modificado";
 
 
-    public BancoServiceIml(MenuServices menuServices, PantallaServiceImp pantalla, WhileMenuServices whileMenuServices, CuentaServices cuentaServices) {
+    public BancoServiceIml(MenuServices menuServices, PantallaServiceImp pantalla, WhileMenuServices whileMenuServices, CuentaServices cuentaServices, ClienteServices clienteServices) {
         this.menuServices = menuServices;
         this.pantalla = pantalla;
         this.whileMenuServices = whileMenuServices;
         this.cuentaServices = cuentaServices;
-
+        this.clienteServices = clienteServices;
     }
 
     public MenuServices getMenuServices() {
@@ -54,74 +57,9 @@ public class BancoServiceIml implements BancoService{
         return cuentaServices;
     }
 
-    @Override
-    public void addCliente(Banco banco) {
-        Cliente cliente = getMenuServices().menuAddCliente();
-        banco.getClientes().put(cliente,new ArrayList<>());
-        System.out.println(MenuServiceImpl.USUARIO_AGREGADO_CORRECTAMENTE);
-
+    public ClienteServices getClienteServices() {
+        return clienteServices;
     }
-
-    @Override
-    public void deleteCuenta(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente) {
-        if (cliente.isPresent()){
-            ArrayList<Cuenta> cuenta = cliente.get().getValue();
-            getPantalla().forCuenta(cuenta);
-            String nCuenta = ImputConsoleServices.getNumeroCuenta();
-            for (int i = 0; i < cuenta.size(); i++ ){
-               cuenta.removeIf(e -> nCuenta.equals(e.getId().toString()));
-            }
-            System.out.println(CuentaServicesImpl.OPERACION_EXITOSA);
-            getPantalla().forCuenta(cuenta);
-        }
-    }
-
-    @Override
-    public Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> getClienteByDni(Banco banco) {
-        System.out.print(INGRESE_DNI_CLIENTE);
-        int dni = ImputConsoleServices.getScanner().nextInt();
-        for (Map.Entry<Cliente,ArrayList<Cuenta>> client: banco.getClientes().entrySet()) {
-            if (client.getKey().getDni() == dni){
-                return Optional.of(client);
-            }
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public void getAllClientes(Banco banco) {
-        System.out.println("\n");
-        for (Map.Entry<Cliente, ArrayList<Cuenta>> entry : banco.getClientes().entrySet()){
-            getPantalla().getAllClientes(entry);
-        }
-    }
-
-    @Override
-    public void detalleCliente(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente) {
-        if(cliente.isPresent()){
-            getPantalla().getAllClientes(cliente.get());
-        }else {
-            System.out.println(NO_SE_HA_ENCONTRADO_CLIENTE);
-        }
-
-    }
-
-    @Override
-    public void createCuenta(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente) {
-        int opc = getMenuServices().menuCrearCuenta();
-        if (cliente.isPresent()){
-            if (opc == 1){
-                cliente.get().getValue().add(new CuentaCorriente(CuentaEnum.CUENTA_CORRIENTE));
-                System.out.println(CUENTA_CREADA_CORRECTAMENTE);
-            } else if (opc == 2) {
-                cliente.get().getValue().add(new CuentaAhorro(CuentaEnum.CAJA_AHORRO));
-                System.out.println(CUENTA_CREADA_CORRECTAMENTE);
-            }
-
-
-        }
-    }
-
 
 
     @Override
@@ -152,17 +90,17 @@ public class BancoServiceIml implements BancoService{
 
     @Override
     public void getCliente(Banco banco) {
-        Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente = getClienteByDni(banco);
+        Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente = getClienteServices().getClienteByDni(banco);
         if (cliente.isPresent()){
             ArrayList<Cuenta> cuentas = cliente.get().getValue();
             int opc;
             do {
                 opc = getMenuServices().menuGetCliente(cliente.get().getKey());
                 switch (opc) {
-                    case 1 -> detalleCliente(cliente);
-                    case 2 -> createCuenta(cliente);
+                    case 1 -> getClienteServices().detalleCliente(cliente);
+                    case 2 -> getCuentaServices().createCuenta(cuentas);
                     case 3 -> getCuentaServices().consultarSaldo(cuentas);
-                    case 4 -> deleteCuenta(cliente);
+                    case 4 -> getCuentaServices().deleteCuenta(cuentas);
                     case 5 -> ingresarSaldo(cuentas);
                     case 6 -> getCuentaServices().modGiro(cuentas);
                     case 7 -> getCuentaServices().retirarSaldo(cuentas);

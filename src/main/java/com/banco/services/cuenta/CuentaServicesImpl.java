@@ -1,13 +1,21 @@
 package com.banco.services.cuenta;
 
+import com.banco.domain.Cliente;
 import com.banco.domain.Cuenta;
+import com.banco.domain.CuentaAhorro;
 import com.banco.domain.CuentaCorriente;
 import com.banco.entrada.ImputConsoleServices;
 import com.banco.enums.CuentaEnum;
 import com.banco.services.banco.BancoServiceIml;
+import com.banco.services.menu.MenuServiceImpl;
+import com.banco.services.menu.MenuServices;
+import com.banco.services.pantalla.PantallaService;
+import com.banco.services.pantalla.PantallaServiceImp;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 
 public class CuentaServicesImpl implements CuentaServices{
 
@@ -17,7 +25,18 @@ public class CuentaServicesImpl implements CuentaServices{
     public static final String OPERACION_EXITOSA = "Operacion exitosa";
     public static final String OPERACION_INVALIDA = "Operacion invalida";
 
+    private MenuServices menuServices = new MenuServiceImpl();
+    private PantallaService pantallaService = new PantallaServiceImp();
+
     public CuentaServicesImpl() {
+    }
+
+    public MenuServices getMenuServices() {
+        return menuServices;
+    }
+
+    public PantallaService getPantallaService() {
+        return pantallaService;
     }
 
     @Override
@@ -99,5 +118,31 @@ public class CuentaServicesImpl implements CuentaServices{
         }else {
             System.out.println(OPERACION_INVALIDA);
         }
+    }
+
+    @Override
+    public void createCuenta(ArrayList<Cuenta> cuentas) {
+        int opc = getMenuServices().menuCrearCuenta();
+        if (opc == 1){
+                cuentas.add(new CuentaCorriente(CuentaEnum.CUENTA_CORRIENTE));
+                System.out.println(BancoServiceIml.CUENTA_CREADA_CORRECTAMENTE);
+            } else if (opc == 2) {
+                cuentas.add(new CuentaAhorro(CuentaEnum.CAJA_AHORRO));
+                System.out.println(BancoServiceIml.CUENTA_CREADA_CORRECTAMENTE);
+            }
+
+
+
+    }
+
+    @Override
+    public void deleteCuenta(ArrayList<Cuenta> cuentas) {
+        getPantallaService().forCuenta(cuentas);
+        String nCuenta = ImputConsoleServices.getNumeroCuenta();
+        for (int i = 0; i < cuentas.size(); i++ ){
+            cuentas.removeIf(e -> nCuenta.equals(e.getId().toString()));
+        }
+        System.out.println(CuentaServicesImpl.OPERACION_EXITOSA);
+        getPantallaService().forCuenta(cuentas);
     }
 }

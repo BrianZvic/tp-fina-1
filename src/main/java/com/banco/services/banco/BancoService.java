@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface BancoService {
-    void addCliente(Banco banco);
-    void deleteCuenta(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente);
-    Optional<Map.Entry<Cliente, ArrayList<Cuenta>>>getClienteByDni(Banco banco);
-    void getAllClientes(Banco banco);
-    void detalleCliente(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente);
+
+
+
     void getCliente(Banco banco);
-    void createCuenta(Optional<Map.Entry<Cliente, ArrayList<Cuenta>>> cliente);
+
 
     void ingresarSaldo(ArrayList<Cuenta> cuentas);
 

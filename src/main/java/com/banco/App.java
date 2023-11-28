@@ -6,6 +6,7 @@ import com.banco.enums.CuentaEnum;
 import com.banco.services.archivos.ArchivoServicesImpl;
 import com.banco.services.banco.BancoService;
 import com.banco.services.banco.BancoServiceIml;
+import com.banco.services.cliente.ClienteServicesImpl;
 import com.banco.services.cuenta.CuentaServicesImpl;
 import com.banco.services.menu.MenuServiceImpl;
 import com.banco.services.menu.whilemenu.WhileMenuServiceImpl;
@@ -30,7 +31,8 @@ public class App
 
         WhileMenuServices main = new WhileMenuServiceImpl(banco1,new MenuServiceImpl(),
                 new BancoServiceIml(new MenuServiceImpl(), new PantallaServiceImp(),
-                        new WhileMenuServiceImpl(), new CuentaServicesImpl()),new ArchivoServicesImpl());
+                        new WhileMenuServiceImpl(), new CuentaServicesImpl(),new ClienteServicesImpl(new MenuServiceImpl(),new PantallaServiceImp())),new ArchivoServicesImpl(),
+                new ClienteServicesImpl(new MenuServiceImpl(),new PantallaServiceImp()));
 
         main.homeMenu();
 
