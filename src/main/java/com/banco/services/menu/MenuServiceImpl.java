@@ -3,43 +3,47 @@ package com.banco.services.menu;
 import com.banco.domain.Cliente;
 import com.banco.domain.Direccion;
 import com.banco.entrada.ImputConsoleServices;
+import com.banco.services.pantalla.PantallaService;
+import com.banco.services.pantalla.PantallaServiceImp;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class MenuServiceImpl implements MenuServices {
 
+    private final PantallaService pantallaService = new PantallaServiceImp();
+    private final String INGRESE_DATOS = "Imgrese los siguientes datos:";
+    private final String DIRECCION = "Direccion";
+
+    private String[] menuGetCliente = {"Ver detalle cliente","Crear cuenta",
+                                        "Ver saldo cuentas","Eliminar cuenta","Ingresar saldo","Modificar valor giro encubierto",
+                                            "Retirar saldo","Interes de cuenta"};
+    public MenuServiceImpl() {
+    }
+
+    public PantallaService getPantallaService() {
+        return pantallaService;
+    }
 
     @Override
     public Cliente menuAddCliente() {
         System.out.println("\n");
-        System.out.println("Imgrese los siguientes datos:");
-        System.out.print("Nombre: ");
-        String nombre = ImputConsoleServices.getScanner().next();
-        System.out.print("Apellido: ");
-        String apellido = ImputConsoleServices.getScanner().next();
-        System.out.print("Dni: ");
-        int dni = ImputConsoleServices.getScanner().nextInt();
-        System.out.print("Fecha de Nacimiento: ");
-        String fech = ImputConsoleServices.getScanner().next();
-        LocalDate fechN = LocalDate.parse(fech, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-
+        System.out.println(INGRESE_DATOS);
+        String nombre = getPantallaService().pantallaString("Nombre");
+        String apellido = getPantallaService().pantallaString("Apellido");
+        int dni = getPantallaService().pantallaInt("DNI");
+        LocalDate fechN = LocalDate.parse(getPantallaService().pantallaString("Fecha de Nacimiento:"), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         return new Cliente(dni,nombre,apellido,menuAddDireccion(),fechN);
     }
 
     @Override
     public Direccion menuAddDireccion() {
         System.out.println("-".repeat(30));
-        System.out.println("Direccion");
-        System.out.print("Nombre: ");
-        String nombreD = ImputConsoleServices.getScanner().next();
-        System.out.print("Altura: ");
-        int altura = ImputConsoleServices.getScanner().nextInt();
-        System.out.print("Localidad: ");
-        String nombreL = ImputConsoleServices.getScanner().next();
-        System.out.print("Provincia: ");
-        String nombreP = ImputConsoleServices.getScanner().next();
+        System.out.println(DIRECCION);
+        String nombreD = getPantallaService().pantallaString("Nombre de calle");
+        int altura = getPantallaService().pantallaInt("Altura");
+        String nombreL = getPantallaService().pantallaString("Ciudad");
+        String nombreP = getPantallaService().pantallaString("Provincia");
         return new Direccion(nombreD,altura,nombreL,nombreP);
     }
 
@@ -60,14 +64,9 @@ public class MenuServiceImpl implements MenuServices {
         System.out.println("-".repeat(30));
         System.out.printf("BIENVENIDO: %s %s\n", cliente.getNombre(),cliente.getApellido());
         System.out.println("-".repeat(30));
-        System.out.println("1: Ver detalle cliente");
-        System.out.println("2: Crear cuenta");
-        System.out.println("3: Ver saldo cuentas");
-        System.out.println("4: Eliminar cuenta");
-        System.out.println("5: Ingresar saldo");
-        System.out.println("6: Modificar valor giro encubierto");
-        System.out.println("7: Retirar saldo");
-        System.out.println("8: Interes de cuenta");
+        for (int i = 0; i < menuGetCliente.length; i++) {
+            System.out.println(i+1 +" "+ menuGetCliente[i]);
+        }
         System.out.println("0: Atras");
         System.out.print("Ingrese una opcion: ");
         return ImputConsoleServices.getScanner().nextInt();

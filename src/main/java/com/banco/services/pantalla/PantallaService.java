@@ -10,7 +10,11 @@ import java.util.Map;
 
 public interface PantallaService {
 
-    public void getAllClientes(Map.Entry<Cliente, ArrayList<Cuenta>> cl);
+    void getAllClientes(Map.Entry<Cliente, ArrayList<Cuenta>> cl);
 
     void forCuenta(ArrayList<Cuenta> cuenta);
+
+    String pantallaString(String string);
+    int pantallaInt(String string);
+    float pantallaFloat(String string);
 }

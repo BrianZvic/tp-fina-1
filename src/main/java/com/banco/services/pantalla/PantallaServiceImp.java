@@ -1,7 +1,7 @@
 package com.banco.services.pantalla;
 import com.banco.domain.Cliente;
 import com.banco.domain.Cuenta;
-import com.banco.domain.CuentaAhorro;
+import com.banco.entrada.ImputConsoleServices;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,5 +25,23 @@ public class PantallaServiceImp implements PantallaService{
             System.out.printf("\t CBU: %s\n",cn.getCbu());
             System.out.printf("\t Saldo: %s\n",cn.getSaldo());
         }
+    }
+
+    @Override
+    public String pantallaString(String string) {
+        System.out.print(string+": ");
+        return ImputConsoleServices.getScanner().next();
+    }
+
+    @Override
+    public int pantallaInt(String string) {
+        System.out.print(string+": ");
+
+        return ImputConsoleServices.getScanner().nextInt();
+    }
+
+    @Override
+    public float pantallaFloat(String string) {
+        return 0;
     }
 }
